@@ -1,0 +1,196 @@
+{
+  "store": {
+    "name": "teknocitym",
+    "whatsapp": "905307967686",
+    "phoneDisplay": "0 (530) 796 76 86",
+    "phoneTel": "+905307967686",
+    "instagram": "teknocitym",
+    "address": "Mimarsinan Mahallesi,çavuşbaşı caddesi no:28/2b",
+    "mapsQuery": "teknocitym",
+    "hours": [
+      {
+        "day": "Pazartesi – Cumartesi",
+        "time": "09:00 – 20:00"
+      },
+      {
+        "day": "Pazar",
+        "time": "Kapalı"
+      }
+    ]
+  },
+  "hero": {
+    "title": "Her parçasını tanıyoruz.",
+    "subtitle": "Keşfetmek için kaydır",
+    "steps": [
+      {
+        "label": "Ekran",
+        "title": "Kırık ekran, aynı gün yenilenir.",
+        "description": "Cam, dokunmatik ve panel değişimi. Parça stoktaysa çoğu değişim birkaç saat içinde biter."
+      },
+      {
+        "label": "Batarya",
+        "title": "Pil sağlığı yeniden tam.",
+        "description": "Çabuk biten ya da şişen bataryayı test eder, kaliteli yenisiyle değiştiririz."
+      },
+      {
+        "label": "Anakart",
+        "title": "Kart seviyesinde onarım.",
+        "description": "Sıvı teması, açılmama ve şarj sorunlarında anakartı mikro lehimle onarırız."
+      },
+      {
+        "label": "Teslim",
+        "title": "Test edilir, garantiyle teslim edilir.",
+        "description": "Tüm fonksiyonlar kontrol edilir; işçilik ve parça garantisi servis fişinde yazar."
+      }
+    ]
+  },
+  "intro": {
+    "title": "Satıyoruz, onarıyoruz.",
+    "text": "Apple cihazlarından oyun konsollarına kadar satış ve teknik servis aynı tezgâhta."
+  },
+  "categories": [
+    {
+      "title": "iPhone, Apple Watch ve AirPods",
+      "text": "Sıfır ve yenilenmiş cihaz satışı; ekran, batarya, kamera ve şarj soketi onarımı.",
+      "tag": "Satış ve tamir",
+      "photo": "https://images.unsplash.com/photo-1657610692944-648587db5013?auto=format&fit=crop&w=1600&q=80",
+      "alt": "Masada iPhone, Apple Watch ve AirPods"
+    },
+    {
+      "title": "MacBook ve iPad",
+      "text": "Sıfır ve yenilenmiş satış; ekran, klavye, batarya ve anakart onarımı.",
+      "tag": "Satış ve tamir",
+      "photo": "https://images.unsplash.com/photo-1691375690421-31cfe1704cf2?auto=format&fit=crop&w=1600&q=80",
+      "alt": "Ahşap masada açık bir MacBook Pro"
+    },
+    {
+      "title": "PlayStation ve konsollar",
+      "text": "Konsol, oyun ve kol satışı; HDMI port, fan bakımı ve kol drift onarımı.",
+      "tag": "Satış ve tamir",
+      "photo": "https://images.unsplash.com/photo-1628566780270-5ac9309b9ab6?auto=format&fit=crop&w=1600&q=80",
+      "alt": "Mor ışık altında PlayStation 5"
+    },
+    {
+      "title": "Oyun bilgisayarı ve bileşenler",
+      "text": "İsteğe göre sistem toplama, parça yükseltme, format ve veri kurtarma.",
+      "tag": "Satış ve tamir",
+      "photo": "https://images.unsplash.com/photo-1614179924047-e1ab49a0a0cf?auto=format&fit=crop&w=1600&q=80",
+      "alt": "Renkli aydınlatmalı oyun bilgisayarı masası"
+    }
+  ],
+  "gallery": {
+    "title": "Tezgâhtan",
+    "text": "Her onarım aynı masada, aynı özenle yapılır.",
+    "items": [
+      {
+        "photo": "https://images.unsplash.com/photo-1746005514011-ea00280f3b6e?auto=format&fit=crop&w=1600&q=80",
+        "caption": "Antistatik matta cihaz tamiri"
+      },
+      {
+        "photo": "https://images.unsplash.com/photo-1639776739297-f7e1f21526f4?auto=format&fit=crop&w=1600&q=80",
+        "caption": "Ekran değişimi"
+      },
+      {
+        "photo": "https://images.unsplash.com/photo-1610119260051-a8d0b3a57e5e?auto=format&fit=crop&w=1600&q=80",
+        "caption": "DualSense kol bakımı"
+      }
+    ]
+  },
+  "sales": {
+    "lead": "Sıfır ve garantili yenilenmiş cihazlar, oyunlar ve aksesuarlar. Eski cihazını takasa verip farkını ödeyebilirsin.",
+    "items": [
+      "iPhone, iPad, MacBook ve Apple Watch; sıfır ve yenilenmiş",
+      "PlayStation 5, oyunlar, kollar ve aksesuarlar",
+      "Hazır ya da isteğine göre toplanan oyun bilgisayarları",
+      "Ekran kartı, SSD, monitör, klavye ve kulaklık",
+      "Kılıf, ekran koruyucu ve şarj aletleri"
+    ]
+  },
+  "repair": {
+    "lead": "Arızayı ücretsiz tespit eder, fiyatı işlemden önce söyleriz. Ekran ve batarya değişimlerinin çoğu aynı gün teslim edilir.",
+    "items": [
+      "Ekran, batarya, arka cam, kamera ve şarj soketi değişimi",
+      "Sıvı teması ve anakart (mikro lehim) onarımı",
+      "PlayStation: HDMI port, fan temizliği, termal macun, kol drift",
+      "Bilgisayar: format, parça yükseltme, menteşe, veri kurtarma",
+      "Yazılım güncelleme, kurulum ve yedekleme"
+    ]
+  },
+  "devices": [
+    {
+      "name": "iPhone",
+      "sale": "Sıfır, ikinci el, takas",
+      "repairs": "Ekran, batarya, arka cam, kamera, Face ID, şarj soketi"
+    },
+    {
+      "name": "iPad",
+      "sale": "Sıfır, ikinci el",
+      "repairs": "Cam ve dokunmatik, ekran, batarya, şarj soketi"
+    },
+    {
+      "name": "MacBook",
+      "sale": "Sıfır, ikinci el",
+      "repairs": "Ekran, klavye, batarya, sıvı teması, anakart"
+    },
+    {
+      "name": "Apple Watch ve AirPods",
+      "sale": "Sıfır ve aksesuar",
+      "repairs": "Cam ve ekran, batarya"
+    },
+    {
+      "name": "PlayStation ve konsollar",
+      "sale": "Konsol, oyun, kol",
+      "repairs": "HDMI port, fan ve termal bakım, kol drift, disk okuyucu"
+    },
+    {
+      "name": "Bilgisayar ve laptop",
+      "sale": "Toplama sistem, bileşen",
+      "repairs": "Format, parça yükseltme, ekran ve menteşe, veri kurtarma"
+    }
+  ],
+  "rules": [
+    {
+      "title": "Önce fiyat, sonra işlem",
+      "text": "Tespitten sonra fiyatı söyleriz. Onaylamadığın hiçbir işlem yapılmaz, sonradan ek ücret çıkmaz."
+    },
+    {
+      "title": "Garantili onarım",
+      "text": "İşçilik ve takılan parça garanti kapsamındadır; garanti süresi servis fişinde yazar."
+    },
+    {
+      "title": "Parçayı sen seçersin",
+      "text": "Orijinal ve kaliteli muadil parça seçeneklerini fiyatlarıyla birlikte sunarız."
+    },
+    {
+      "title": "Verin cihazında kalır",
+      "text": "Ekran, batarya ve kasa işlemlerinde verilerine dokunmayız."
+    }
+  ],
+  "faq": [
+    {
+      "q": "Arıza tespiti ücretli mi?",
+      "a": "Hayır, arıza tespiti ücretsiz. Onarımı onaylamazsan cihazını ücret ödemeden geri alırsın."
+    },
+    {
+      "q": "Tamir ne kadar sürer?",
+      "a": "Parça stoktaysa ekran ve batarya değişimi çoğunlukla aynı gün biter. Anakart ve sıvı teması onarımları birkaç gün sürebilir; süreyi tespitten sonra bildiririz."
+    },
+    {
+      "q": "Cihazımın durumunu nasıl takip ederim?",
+      "a": "Servis fişi numaran ve telefonunun son dört hanesiyle bu sayfadaki Fiş sorgula bölümünden güncel durumu görebilirsin."
+    },
+    {
+      "q": "Verilerim silinir mi?",
+      "a": "Ekran, batarya ve kasa işlemlerinde verilere dokunulmaz. Yazılım ve anakart işlemlerinden önce yedek almanı öneririz; istersen yedeklemede yardımcı oluruz."
+    },
+    {
+      "q": "Orijinal parça mı kullanıyorsunuz?",
+      "a": "Orijinal ve kaliteli muadil parça seçeneklerini fiyatlarıyla birlikte sunarız. Hangisinin takılacağına sen karar verirsin."
+    },
+    {
+      "q": "Eski cihazımı satabilir veya takas edebilir miyim?",
+      "a": "Evet. Servis fişinde talep türünü Takas olarak seç, modelini ve durumunu yaz; fiyat teklifimizi iletelim."
+    }
+  ],
+  "kvkk": "Adınız ve telefon numaranız ve yalnızca bu servis talebini yürütmek ve seninle iletişim kurmak için kullanılır; üçüncü kişilerle paylaşılmaz."
+}

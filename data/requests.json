@@ -1,0 +1,30 @@
+[
+  {
+    "type": "Tamir",
+    "device": "iPhone",
+    "model": "iphone 15 promax",
+    "issues": [
+      "Ekran kırık",
+      "Batarya"
+    ],
+    "note": "yere dustu",
+    "name": "Uğur Sanatçı",
+    "phone": "+905416179447",
+    "id": "d53aa6e2-8e1c-42e5-a0c9-186ebb2a9341",
+    "ticketNo": "TC-260929-5449",
+    "createdAt": "2026-09-29T00:16:07.076Z",
+    "updatedAt": "2026-09-29T00:16:59.099Z",
+    "status": "Onarımda",
+    "internalNote": "",
+    "history": [
+      {
+        "status": "Alındı",
+        "at": "2026-09-29T00:16:07.076Z"
+      },
+      {
+        "status": "Onarımda",
+        "at": "2026-09-29T00:16:59.099Z"
+      }
+    ]
+  }
+]
