@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { BrandMark } from "./brand-mark";
 import type { TicketPreset } from "./preset-link";
 import { DEVICES, ISSUES, REQUEST_TYPES, type RequestType } from "@/lib/requests";
@@ -15,14 +16,18 @@ const TYPE_TEXT: Record<RequestType, { note: string; ph: string; model: string }
 type Errors = Partial<Record<"device" | "name" | "phone" | "consent" | "form", string>>;
 
 export function TicketForm({
+  storeName,
   whatsapp,
   phoneDisplay,
   phoneTel,
+  address,
   kvkk,
 }: {
+  storeName: string;
   whatsapp: string;
   phoneDisplay: string;
   phoneTel: string;
+  address: string;
   kvkk: string;
 }) {
   const [type, setType] = useState<RequestType>("Tamir");
@@ -41,6 +46,11 @@ export function TicketForm({
   const deviceRef = useRef<HTMLSelectElement>(null);
   const nameRef = useRef<HTMLInputElement>(null);
   const phoneRef = useRef<HTMLInputElement>(null);
+  const [printRoot, setPrintRoot] = useState<HTMLElement | null>(null);
+
+  useEffect(() => {
+    setPrintRoot(document.getElementById("print-root"));
+  }, []);
 
   useEffect(() => {
     setToday(new Date().toLocaleDateString("tr-TR", { day: "2-digit", month: "2-digit", year: "numeric" }));
@@ -116,7 +126,7 @@ export function TicketForm({
       <div className="ticket-brand">
         <BrandMark />
         <div>
-          <strong>teknocitym</strong>
+          <strong>{storeName}</strong>
           <span>Servis fişi</span>
         </div>
       </div>
@@ -135,27 +145,50 @@ export function TicketForm({
 
   if (ticketNo) {
     return (
-      <div className="ticket" role="status">
-        {head}
-        <div className="ticket-done">
-          <div className="ring">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M5 12.5l4.5 4.5L19 7.5" />
-            </svg>
-          </div>
-          <h3>Talebin alındı</h3>
-          <p>Fiş numaranı sakla; cihazının durumunu bununla sorgulayabilirsin. En kısa sürede seni arayacağız.</p>
-          <div className="no">{ticketNo}</div>
-          <div className="btn-row" style={{ justifyContent: "center" }}>
-            <a className="btn btn-solid" href={waLink(whatsapp, summary)} target="_blank" rel="noopener noreferrer">
-              WhatsApp&apos;tan da gönder
-            </a>
-            <button type="button" className="btn btn-line" style={{ color: "#0A0A0A", borderColor: "#CFCFCC" }} onClick={reset}>
-              Yeni talep
-            </button>
+      <>
+        <div className="ticket" role="status">
+          {head}
+          <div className="ticket-done">
+            <div className="ring">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M5 12.5l4.5 4.5L19 7.5" />
+              </svg>
+            </div>
+            <h3>Talebin alındı</h3>
+            <p>Fiş numaranı sakla; cihazının durumunu bununla sorgulayabilirsin. En kısa sürede seni arayacağız.</p>
+            <div className="no">{ticketNo}</div>
+            <div className="btn-row" style={{ justifyContent: "center" }}>
+              <a className="btn btn-solid" href={waLink(whatsapp, summary)} target="_blank" rel="noopener noreferrer">
+                WhatsApp&apos;tan da gönder
+              </a>
+              <button type="button" className="btn btn-line" style={{ color: "#0A0A0A", borderColor: "#CFCFCC" }} onClick={() => window.print()}>
+                Yazdır
+              </button>
+              <button type="button" className="btn btn-line" style={{ color: "#0A0A0A", borderColor: "#CFCFCC" }} onClick={reset}>
+                Yeni talep
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+        {printRoot &&
+          createPortal(
+            <PrintSlip
+              no={ticketNo}
+              today={today}
+              storeName={storeName}
+              type={type}
+              device={device}
+              model={model}
+              issues={issues}
+              note={note}
+              name={name}
+              phone={phone}
+              phoneDisplay={phoneDisplay}
+              address={address}
+            />,
+            printRoot,
+          )}
+      </>
     );
   }
 
@@ -296,5 +329,109 @@ export function TicketForm({
         Aramayı tercih edersen: <a href={telLink(phoneTel)}>{phoneDisplay}</a>
       </p>
     </form>
+  );
+}
+
+/**
+ * Yazdırılabilir servis fişi. Ekranda görünmez; yalnızca yazdırma önizlemesinde
+ * (window.print) sayfanın geri kalanının yerine gösterilir (bkz. globals.css'teki
+ * @media print kuralı). Fiş onaylandığında mağazanın müşteriye elden verebileceği
+ * kağıt kopyayı sağlar.
+ */
+function PrintSlip({
+  no,
+  today,
+  storeName,
+  type,
+  device,
+  model,
+  issues,
+  note,
+  name,
+  phone,
+  phoneDisplay,
+  address,
+}: {
+  no: string;
+  today: string;
+  storeName: string;
+  type: RequestType;
+  device: string;
+  model: string;
+  issues: string[];
+  note: string;
+  name: string;
+  phone: string;
+  phoneDisplay: string;
+  address: string;
+}) {
+  return (
+    <div className="print-slip" aria-hidden="true">
+      <div className="ps-head">
+        <div className="ps-brand">
+          <BrandMark />
+          <div>
+            <strong>{storeName}</strong>
+            <span>Servis Fişi</span>
+          </div>
+        </div>
+        <div className="ps-meta">
+          <div>
+            Fiş no
+            <b>{no}</b>
+          </div>
+          <div>
+            Tarih
+            <b>{today}</b>
+          </div>
+        </div>
+      </div>
+      <table className="ps-table">
+        <tbody>
+          <tr>
+            <th>Müşteri</th>
+            <td>{name}</td>
+          </tr>
+          <tr>
+            <th>Telefon</th>
+            <td>{phone}</td>
+          </tr>
+          <tr>
+            <th>Talep türü</th>
+            <td>{type}</td>
+          </tr>
+          <tr>
+            <th>Cihaz</th>
+            <td>{[device, model].filter(Boolean).join(" ") || "—"}</td>
+          </tr>
+          {type === "Tamir" && (
+            <tr>
+              <th>Sorun</th>
+              <td>{issues.length ? issues.join(", ") : "—"}</td>
+            </tr>
+          )}
+          <tr>
+            <th>Not</th>
+            <td>{note || "—"}</td>
+          </tr>
+          <tr>
+            <th>Durum</th>
+            <td>Alındı</td>
+          </tr>
+        </tbody>
+      </table>
+      <p className="ps-note">
+        Arıza tespiti ücretsizdir. Fiyat onaylanmadan hiçbir onarım işlemi yapılmaz. Bu fiş, cihazın teslim alındığına dair
+        belgedir; teslim sırasında ibraz edilmesi rica olunur.
+      </p>
+      <div className="ps-sign">
+        <div>Müşteri imzası</div>
+        <div>Yetkili imzası</div>
+      </div>
+      <p className="ps-foot">
+        {phoneDisplay}
+        {address ? ` · ${address}` : ""}
+      </p>
+    </div>
   );
 }

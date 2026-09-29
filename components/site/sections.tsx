@@ -152,7 +152,14 @@ export function Bench({ store, kvkk }: { store: C["store"]; kvkk: string }) {
           </ol>
         </div>
         <div id="fis">
-          <TicketForm whatsapp={store.whatsapp} phoneDisplay={store.phoneDisplay} phoneTel={store.phoneTel} kvkk={kvkk} />
+          <TicketForm
+            storeName={store.name}
+            whatsapp={store.whatsapp}
+            phoneDisplay={store.phoneDisplay}
+            phoneTel={store.phoneTel}
+            address={store.address}
+            kvkk={kvkk}
+          />
         </div>
       </div>
     </section>

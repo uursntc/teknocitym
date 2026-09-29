@@ -24,7 +24,12 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="tr" className={hanken.variable}>
-      <body>{children}</body>
+      <body>
+        {children}
+        {/* Yazdırılabilir servis fişi buraya taşınır (bkz. ticket-form.tsx); sayfanın
+            geri kalanından bağımsız, body'nin doğrudan çocuğu olarak durur. */}
+        <div id="print-root" />
+      </body>
     </html>
   );
 }
