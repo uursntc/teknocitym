@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { BRAND_NAME } from "@/lib/brand";
 
 const LINKS = [
   { href: "#hizmetler", label: "Hizmetler" },
@@ -12,7 +13,7 @@ const LINKS = [
   { href: "#iletisim", label: "İletişim" },
 ];
 
-export function SiteHeader({ name, waHref }: { name: string; waHref: string }) {
+export function SiteHeader({ waHref }: { name?: string; waHref: string }) {
   const [open, setOpen] = useState(false);
   const [dark, setDark] = useState(true);
 
@@ -35,8 +36,12 @@ export function SiteHeader({ name, waHref }: { name: string; waHref: string }) {
   return (
     <header className={`site-header${dark && !open ? " is-dark" : ""}`}>
       <div className="wrap header-row">
-        <a className="brand" href="#top" aria-label={`${name}, sayfanın başına git`}>
-          <span className="brand-word">{name}</span>
+        <a className="brand" href="#top" aria-label={`${BRAND_NAME}, sayfanın başına git`}>
+          <span className="brand-logo" aria-hidden="true">
+            <span className="brand-tekno">Tekno</span>
+            <span className="brand-bar" />
+            <span className="brand-citym">Citym</span>
+          </span>
         </a>
         <nav id="site-nav" className={`nav${open ? " open" : ""}`} aria-label="Ana menü" onClick={(e) => {
           if ((e.target as HTMLElement).closest("a")) setOpen(false);

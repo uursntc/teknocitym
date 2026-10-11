@@ -83,6 +83,10 @@ button{font:inherit}
 .brand{display:inline-flex;align-items:center;gap:10px;text-decoration:none;color:inherit;flex:none}
 .brand-mark{width:26px;height:26px;flex:none}
 .brand-word{font-size:22px;font-weight:700;letter-spacing:-.035em}
+.brand-logo{display:inline-flex;align-items:center;gap:.3em;font-size:22px;line-height:1;letter-spacing:-.035em;white-space:nowrap}
+.brand-tekno{font-weight:800}
+.brand-citym{font-weight:400}
+.brand-bar{flex:none;width:3px;height:1.12em;border-radius:3px;background:linear-gradient(180deg,#4CAF50 0%,#8BC34A 16%,#FFEB3B 32%,#FF9800 48%,#F44336 62%,#E91E63 76%,#9C27B0 88%,#3F51B5 100%)}
 .nav{display:flex;gap:2px;margin-left:auto}
 .nav a{white-space:nowrap;padding:8px 12px;border-radius:999px;text-decoration:none;font-size:14.5px;font-weight:500;opacity:.72;transition:opacity .15s}
 .nav a:hover{opacity:1}

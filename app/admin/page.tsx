@@ -5,7 +5,7 @@ import { isAdmin } from "@/lib/auth";
 import { getContent, listRequests } from "@/lib/store";
 
 export const dynamic = "force-dynamic";
-export const metadata: Metadata = { title: "Yönetim paneli | teknocitym", robots: { index: false, follow: false } };
+export const metadata: Metadata = { title: "Yönetim paneli | Teknocitym", robots: { index: false, follow: false } };
 
 export default async function AdminPage() {
   if (!(await isAdmin())) return <LoginForm configured={!!process.env.ADMIN_PASSWORD} />;

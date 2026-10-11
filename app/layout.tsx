@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Hanken_Grotesk } from "next/font/google";
 import "./globals.css";
+import { BRAND_ALTERNATE_NAMES, BRAND_NAME, SITE_DESCRIPTION, SITE_TITLE, SITE_URL } from "@/lib/brand";
 
 const hanken = Hanken_Grotesk({
   subsets: ["latin", "latin-ext"],
@@ -9,9 +10,30 @@ const hanken = Hanken_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "teknocitym | Apple, PlayStation ve bilgisayar satış ve tamir",
-  description:
-    "iPhone, iPad, MacBook, PlayStation ve bilgisayar satışı ve teknik servisi. Ücretsiz arıza tespiti, fiş numarasıyla online durum sorgulama.",
+  metadataBase: new URL(SITE_URL),
+  title: SITE_TITLE,
+  description: SITE_DESCRIPTION,
+  applicationName: BRAND_NAME,
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    locale: "tr_TR",
+    url: "/",
+    siteName: BRAND_NAME,
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+  },
+  appleWebApp: { title: BRAND_NAME },
+};
+
+// Google'a sitenin adını ve adresini açıkça söyler (arama sonucundaki site adı için)
+const websiteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: BRAND_NAME,
+  alternateName: BRAND_ALTERNATE_NAMES,
+  url: `${SITE_URL}/`,
+  inLanguage: "tr-TR",
 };
 
 export const viewport: Viewport = {
@@ -24,6 +46,9 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="tr" className={hanken.variable}>
+      <head>
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }} />
+      </head>
       <body>
         {children}
         {/* Yazdırılabilir servis fişi buraya taşınır (bkz. ticket-form.tsx); sayfanın
