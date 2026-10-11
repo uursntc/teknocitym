@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { BrandMark } from "./brand-mark";
 
 const LINKS = [
   { href: "#hizmetler", label: "Hizmetler" },
@@ -37,7 +36,6 @@ export function SiteHeader({ name, waHref }: { name: string; waHref: string }) {
     <header className={`site-header${dark && !open ? " is-dark" : ""}`}>
       <div className="wrap header-row">
         <a className="brand" href="#top" aria-label={`${name}, sayfanın başına git`}>
-          <BrandMark />
           <span className="brand-word">{name}</span>
         </a>
         <nav id="site-nav" className={`nav${open ? " open" : ""}`} aria-label="Ana menü" onClick={(e) => {
