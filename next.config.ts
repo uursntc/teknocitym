@@ -8,14 +8,24 @@ const nextConfig: NextConfig = {
     // Eski siteden Google'ın hâlâ hafızasında tuttuğu sayfa adresleri.
     // Yeni site tek sayfa olduğu için bunları ana sayfadaki ilgili
     // bölüme veya ana sayfaya yönlendiriyoruz ki 404 yerine site açılsın.
-    return [
-      { source: "/hizmetler", destination: "/#hizmetler", permanent: true },
-      { source: "/hakkimizda", destination: "/", permanent: true },
-      { source: "/iletisim", destination: "/#iletisim", permanent: true },
-      { source: "/servis", destination: "/#servis", permanent: true },
-      { source: "/tamir", destination: "/#tamir", permanent: true },
-      { source: "/satis", destination: "/#satis", permanent: true },
+    // Eski site .html uzantılı çalıştığı için her adresin .html hâli de var.
+    const legacy: [string, string][] = [
+      ["hizmetler", "/#hizmetler"],
+      ["hizmetlerimiz", "/#hizmetler"],
+      ["hakkimizda", "/"],
+      ["iletisim", "/#iletisim"],
+      ["servis", "/#servis"],
+      ["tamir", "/#tamir"],
+      ["satis", "/#satis"],
+      ["urunler", "/#cihazlar"],
+      ["cihazlar", "/#cihazlar"],
+      ["index", "/"],
     ];
+
+    return legacy.flatMap(([name, destination]) => [
+      { source: `/${name}`, destination, permanent: true },
+      { source: `/${name}.html`, destination, permanent: true },
+    ]);
   },
 };
 
