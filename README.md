@@ -61,13 +61,25 @@ Panelde yapılan her değişiklik proje klasöründeki `data/` altına yazılır
 
 ## Nereye yüklenir?
 
-Veriler dosyaya yazıldığı için **kalıcı diski olan bir Node.js sunucusu** gerekir:
+Site **Cloudflare Workers** üzerinde çalışır ([OpenNext](https://opennext.js.org/cloudflare) ile). Panel verileri `teknocitym-data` adlı **R2 kovasında** durur (`wrangler.jsonc` içinde `DATA_BUCKET`). Kovada anahtarlar `data/` klasöründekiyle aynıdır: `content.json`, `requests.json`, `uploads/...`.
 
-- Kendi VPS'in (ör. Ubuntu + Node 20 + `pm2 start npm --name teknocitym -- start`, önüne Nginx ve SSL)
-- Render (Persistent Disk ekleyip `DATA_DIR` değişkenini diskin yoluna ayarla)
-- Railway (Volume ekleyip `DATA_DIR` değişkenini volume yoluna ayarla)
+İlk kurulum (bir kere):
 
-**Vercel ve benzeri sunucusuz platformlar** dosya sistemini kalıcı tutmaz; orada paneldeki değişiklikler ve talepler kaybolur. Vercel kullanmak istersen `lib/store.ts` dosyasını bir veritabanına (Supabase, Neon, Vercel KV vb.) bağlamak yeterli; sitenin geri kalanı değişmez.
+```bash
+npx wrangler login
+npx wrangler r2 bucket create teknocitym-data
+npx wrangler secret put ADMIN_PASSWORD
+npx wrangler secret put ADMIN_SECRET
+npm run deploy
+```
+
+Sonraki güncellemeler için `npm run deploy` yeterli. Cloudflare panelinde Workers Builds ile GitHub deposunu bağlarsan her push'ta kendisi yayınlar (derleme komutu `npx opennextjs-cloudflare build`, yayın komutu `npx opennextjs-cloudflare deploy`).
+
+- `npm run dev`: bilgisayarında çalıştırır. Veriler yerel bir R2 taklidinde (`.wrangler/` klasörü) durur.
+- `npm run preview`: siteyi Cloudflare çalışma ortamında yerel olarak dener. Şifreler için `.dev.vars.example` dosyasını `.dev.vars` adıyla kopyala.
+- `npm run migrate -- https://eski-adres PANEL_SIFRESI`: eski sunucudaki içerik, talep ve fotoğrafları R2 kovasına kopyalar (ayrıca `migration-backup/` klasörüne yedekler).
+
+Cloudflare dışında `npm run build && npm start` ile klasik bir Node sunucusunda da çalışır. O zaman veriler `data/` klasörüne (ya da `DATA_DIR`) yazılır, yani kalıcı bir disk gerekir.
 
 ## Yayından önce değiştirilmesi gerekenler
 
@@ -106,7 +118,7 @@ components/
   admin/                   Panel bileşenleri
 lib/
   default-content.json     Varsayılan metinler
-  store.ts                 Dosya tabanlı depolama
+  store.ts                 Depolama (Cloudflare'de R2, diğer yerlerde data/ klasörü)
   admin-schema.ts          Paneldeki form alanlarının tanımı
 public/frames/             Animasyon kareleri
 ```
@@ -126,7 +138,7 @@ Stil dosyası `app/globals.css`: Tailwind 4 içe aktarmaları, `fsh-shimmer` ani
 
 ## Güvenlik notları
 
-- Panel şifresi `.env.local` içinde durur; bu dosyayı paylaşma, Git'e ekleme.
+- Panel şifresi bilgisayarda `.env.local` içinde, Cloudflare'de ise Worker'ın gizli değişkenlerinde (Secrets) durur; paylaşma, Git'e ekleme.
 - Oturum 12 saat geçerlidir. Çıkış yapınca çerez silinir.
 - Giriş denemeleri, form gönderimleri ve fiş sorguları IP başına sınırlandırılır.
 - Fiş sorgulamada müşteri yalnızca durum bilgisini görür; ad, telefon ve notlar gösterilmez.

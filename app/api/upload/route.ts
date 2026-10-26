@@ -1,9 +1,7 @@
 import { NextResponse } from "next/server";
-import { promises as fs } from "fs";
-import path from "path";
 import crypto from "crypto";
 import { isAdmin } from "@/lib/auth";
-import { UPLOAD_DIR } from "@/lib/store";
+import { saveUpload } from "@/lib/store";
 
 const TYPES: Record<string, string> = {
   "image/jpeg": "jpg",
@@ -23,7 +21,6 @@ export async function POST(req: Request) {
   if (!ext) return NextResponse.json({ error: "Yalnızca JPG, PNG, WEBP, AVIF veya GIF yükleyebilirsin." }, { status: 400 });
   if (file.size > MAX_BYTES) return NextResponse.json({ error: "Dosya 8 MB'tan büyük olamaz." }, { status: 400 });
   const name = `${Date.now()}-${crypto.randomBytes(4).toString("hex")}.${ext}`;
-  await fs.mkdir(UPLOAD_DIR, { recursive: true });
-  await fs.writeFile(path.join(UPLOAD_DIR, name), Buffer.from(await file.arrayBuffer()));
+  await saveUpload(name, new Uint8Array(await file.arrayBuffer()), file.type);
   return NextResponse.json({ url: `/api/uploads/${name}` });
 }

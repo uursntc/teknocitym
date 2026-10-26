@@ -2,36 +2,96 @@ import "server-only";
 import { promises as fs } from "fs";
 import path from "path";
 import crypto from "crypto";
+import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { mergeContent, type SiteContent } from "./content";
 import type { NewRequestInput, ServiceRequest, Status } from "./requests";
 
 /*
- * Dosya tabanlı depolama. Veriler ./data klasöründe JSON olarak durur:
- *   data/content.json   site içeriği (panelden düzenlenir)
- *   data/requests.json  servis talepleri
- *   data/uploads/       panelden yüklenen fotoğraflar
- * Kalıcı diski olan her Node sunucusunda çalışır (VPS, Render, Railway vb.).
- * Başka bir veritabanına geçmek istersen yalnızca bu dosyayı değiştirmen yeterli.
+ * Depolama. Veriler iki yerden birinde durur:
+ *   Cloudflare'de: DATA_BUCKET adlı R2 kovası (wrangler.jsonc içinde tanımlı)
+ *   Bilgisayarda (npm run dev) ve Node sunucusunda: ./data klasörü (ya da DATA_DIR)
+ * İki tarafta da anahtarlar aynı:
+ *   content.json   site içeriği (panelden düzenlenir)
+ *   requests.json  servis talepleri
+ *   uploads/       panelden yüklenen fotoğraflar
  */
 const DATA_DIR = process.env.DATA_DIR || path.join(process.cwd(), "data");
-const CONTENT_FILE = path.join(DATA_DIR, "content.json");
-const REQUESTS_FILE = path.join(DATA_DIR, "requests.json");
-export const UPLOAD_DIR = path.join(DATA_DIR, "uploads");
+const CONTENT_KEY = "content.json";
+const REQUESTS_KEY = "requests.json";
 
-async function readJson<T>(file: string, fallback: T): Promise<T> {
-  try {
-    const raw = await fs.readFile(file, "utf8");
-    return JSON.parse(raw) as T;
-  } catch {
-    return fallback;
-  }
+type StoredFile = { body: Uint8Array<ArrayBuffer>; contentType?: string };
+
+// R2 kovasından kullandığımız kadarı (tam tipler @cloudflare/workers-types içinde)
+type R2Bucket = {
+  get(key: string): Promise<{ arrayBuffer(): Promise<ArrayBuffer>; httpMetadata?: { contentType?: string } } | null>;
+  put(key: string, body: Uint8Array | string, options?: { httpMetadata?: { contentType?: string } }): Promise<unknown>;
+};
+
+interface Backend {
+  get(key: string): Promise<StoredFile | null>;
+  put(key: string, body: Uint8Array | string, contentType: string): Promise<void>;
 }
 
-async function writeJson(file: string, value: unknown) {
-  await fs.mkdir(path.dirname(file), { recursive: true });
-  const tmp = `${file}.${crypto.randomBytes(4).toString("hex")}.tmp`;
-  await fs.writeFile(tmp, JSON.stringify(value, null, 2), "utf8");
-  await fs.rename(tmp, file);
+const fileBackend: Backend = {
+  async get(key) {
+    try {
+      return { body: new Uint8Array(await fs.readFile(path.join(DATA_DIR, key))) };
+    } catch {
+      return null;
+    }
+  },
+  async put(key, body) {
+    const file = path.join(DATA_DIR, key);
+    await fs.mkdir(path.dirname(file), { recursive: true });
+    const tmp = `${file}.${crypto.randomBytes(4).toString("hex")}.tmp`;
+    await fs.writeFile(tmp, body);
+    await fs.rename(tmp, file);
+  },
+};
+
+function r2Backend(bucket: R2Bucket): Backend {
+  return {
+    async get(key) {
+      const obj = await bucket.get(key);
+      if (!obj) return null;
+      return { body: new Uint8Array(await obj.arrayBuffer()), contentType: obj.httpMetadata?.contentType };
+    },
+    async put(key, body, contentType) {
+      await bucket.put(key, body, { httpMetadata: { contentType } });
+    },
+  };
+}
+
+async function backend(): Promise<Backend> {
+  try {
+    // Senkron mod bilerek seçildi: bağlam yalnızca Cloudflare'de ve npm run dev'de vardır.
+    // Async mod next start altında da yerel bir R2 taklidi açar ve DATA_DIR'i yok sayardı.
+    const { env } = getCloudflareContext();
+    const bucket = (env as { DATA_BUCKET?: R2Bucket }).DATA_BUCKET;
+    if (bucket) return r2Backend(bucket);
+  } catch {
+    // Cloudflare dışında (ör. next start) çalışıyoruz
+  }
+  return fileBackend;
+}
+
+// Dosya yoksa fallback döner. Okuma hatasında fırlatır: aksi halde geçici bir R2 hatasından
+// sonra boş listeyle üzerine yazıp tüm talepleri silebilirdik.
+async function readJson<T>(key: string, fallback: T): Promise<T> {
+  const file = await (await backend()).get(key);
+  return file ? (JSON.parse(new TextDecoder().decode(file.body)) as T) : fallback;
+}
+
+async function writeJson(key: string, value: unknown) {
+  await (await backend()).put(key, JSON.stringify(value, null, 2), "application/json");
+}
+
+export async function getUpload(name: string): Promise<StoredFile | null> {
+  return (await backend()).get(`uploads/${name}`);
+}
+
+export async function saveUpload(name: string, body: Uint8Array, contentType: string) {
+  await (await backend()).put(`uploads/${name}`, body, contentType);
 }
 
 // Aynı anda gelen yazma işlemlerini sıraya koyar
@@ -43,17 +103,18 @@ function serialize<T>(fn: () => Promise<T>): Promise<T> {
 }
 
 export async function getContent(): Promise<SiteContent> {
-  return mergeContent(await readJson<unknown>(CONTENT_FILE, null));
+  // İçerik okunamazsa site varsayılan içerikle açılmaya devam etsin
+  return mergeContent(await readJson<unknown>(CONTENT_KEY, null).catch(() => null));
 }
 
 export async function saveContent(content: unknown): Promise<SiteContent> {
   const merged = mergeContent(content);
-  await serialize(() => writeJson(CONTENT_FILE, merged));
+  await serialize(() => writeJson(CONTENT_KEY, merged));
   return merged;
 }
 
 export async function listRequests(): Promise<ServiceRequest[]> {
-  return readJson<ServiceRequest[]>(REQUESTS_FILE, []);
+  return readJson<ServiceRequest[]>(REQUESTS_KEY, []);
 }
 
 function makeTicketNo(existing: Set<string>) {
@@ -81,7 +142,7 @@ export async function createRequest(input: NewRequestInput): Promise<ServiceRequ
       history: [{ status: "Alındı", at: now }],
     };
     all.unshift(req);
-    await writeJson(REQUESTS_FILE, all);
+    await writeJson(REQUESTS_KEY, all);
     return req;
   });
 }
@@ -101,7 +162,7 @@ export async function updateRequest(
     }
     if (typeof patch.internalNote === "string") req.internalNote = patch.internalNote.slice(0, 2000);
     req.updatedAt = now;
-    await writeJson(REQUESTS_FILE, all);
+    await writeJson(REQUESTS_KEY, all);
     return req;
   });
 }
@@ -111,7 +172,7 @@ export async function deleteRequest(id: string): Promise<boolean> {
     const all = await listRequests();
     const next = all.filter((r) => r.id !== id);
     if (next.length === all.length) return false;
-    await writeJson(REQUESTS_FILE, next);
+    await writeJson(REQUESTS_KEY, next);
     return true;
   });
 }

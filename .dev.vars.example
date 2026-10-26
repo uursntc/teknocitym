@@ -1,0 +1,4 @@
+# Cloudflare önizlemesi (npm run preview) için yerel değişkenler.
+# Bu dosyayı .dev.vars adıyla kopyala.
+ADMIN_PASSWORD=degistir-beni
+ADMIN_SECRET=

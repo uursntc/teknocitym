@@ -9,3 +9,10 @@ data/uploads/*
 *.tsbuildinfo
 next-env.d.ts
 .DS_Store
+
+# Cloudflare
+.open-next
+.wrangler
+.dev.vars*
+!.dev.vars.example
+migration-backup

@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
 
 const nextConfig: NextConfig = {
   images: {
@@ -30,3 +31,7 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
+
+// npm run dev sırasında Cloudflare bağlantılarını (R2 kovası) yerelde taklit eder.
+// next start (ör. Railway) bunu atlar ve verileri DATA_DIR klasöründe tutmaya devam eder.
+if (process.env.NODE_ENV === "development") initOpenNextCloudflareForDev();

@@ -1,6 +1,7 @@
 import "server-only";
 
-// Basit, bellek içi istek sınırlayıcı (tek sunuculu kurulumlar için yeterli)
+// Basit, bellek içi istek sınırlayıcı. Cloudflare'de her sunucu kopyası kendi sayacını tutar,
+// yani sınır kesin değil ama kaba saldırıları yine de yavaşlatır.
 const buckets = new Map<string, { count: number; reset: number }>();
 
 export function rateLimit(key: string, limit: number, windowMs: number) {
@@ -16,6 +17,8 @@ export function rateLimit(key: string, limit: number, windowMs: number) {
 }
 
 export function clientIp(req: Request) {
+  const cf = req.headers.get("cf-connecting-ip");
+  if (cf) return cf;
   const fwd = req.headers.get("x-forwarded-for");
   return (fwd ? fwd.split(",")[0] : req.headers.get("x-real-ip")) || "local";
 }
